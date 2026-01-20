@@ -11,6 +11,7 @@ class User extends Authenticatable
     protected $fillable = [
         'a_id',
         'username',
+        'email',
         'password_hash',
         'status',
     ];
@@ -37,4 +38,10 @@ class User extends Authenticatable
         return $this->hasMany(Account::class, 'owner_id')
             ->where('owner_type', 'user');
     }
+
+    public function getAuthPassword()
+    {
+        return $this->password_hash;
+    }
+
 }
