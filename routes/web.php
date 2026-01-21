@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\ArchiveController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -23,4 +24,8 @@ use App\Http\Controllers\ArchiveController;
 
 Route::get('/archive/{archive}', [ArchiveController::class, 'show'])
     ->name('archive.show');
+
+
+Route::get('/archives', [ArchiveController::class, 'index'])->name('archive.index');
+Route::get('/archive/{archive}', [ArchiveController::class, 'show'])->name('archive.show');
 
