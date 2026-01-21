@@ -16,7 +16,7 @@ class ArchiveController extends Controller
         $user = Auth::user();
 
         // Get the IDs of the user's groups
-        $userGroupIds = $user ? $user->groups()->pluck('id')->toArray() : [];
+        $userGroupIds = $user ? $user->groups()->pluck('user_groups.id')->toArray() : [];
 
         // Access map for blade display
         $accessMap = [
