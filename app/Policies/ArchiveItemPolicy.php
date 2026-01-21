@@ -5,24 +5,26 @@ namespace App\Policies;
 use App\Models\ArchiveItem;
 use App\Models\User;
 
-public function view(?User $user, ArchiveItem $archive): bool
+class ArchiveItemPolicy
 {
-    // 1. Public access
-    if ($archive->access_level === 'public') {
-        return true;
-    }
+    /**
+     * Determine whether the user can view the archive item.
+     */
+    public function view(?User $user, ArchiveItem $archive): bool
+    {
+        // Public archives are always visible
+        if ($archive->access_level === 'public') {
+            return true;
+        }
 
-    // 2. Guest cannot access non-public
-    if (!$user) {
-        return false;
-    }
+        // Private archives require authentication
+        if (!$user) {
+            return false;
+        }
 
-    // 3. Direct group access
-    return $archive->userGroups()
-        ->whereIn(
-            'user_groups.id',
-            $user->userGroups->pluck('id')
-        )
-        ->exists();
+        // User must belong to at least one allowed group
+        return $archive->userGroups()
+            ->whereIn('user_groups.id', $user->userGroups->pluck('id'))
+            ->exists();
+    }
 }
-

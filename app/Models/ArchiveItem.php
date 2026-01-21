@@ -26,7 +26,9 @@ class ArchiveItem extends Model
     {
         return $this->belongsToMany(
             UserGroup::class,
-            'archive_item_user_groups'
+            'archive_item_user_group',
+            'archive_item_id',
+            'user_group_id'
         );
     }
 

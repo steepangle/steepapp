@@ -36,10 +36,11 @@ class User extends Authenticatable
     {
         return $this->belongsToMany(
             UserGroup::class,
-            'user_group_memberships'
+            'user_group_memberships',
+            'user_id',
+            'user_group_id'
         );
     }
-
 
     public function accounts(): HasMany
     {

@@ -13,9 +13,6 @@ class AuthServiceProvider extends ServiceProvider
      *
      * @var array<class-string, class-string>
      */
-    protected $policies = [
-        ArchiveItem::class => ArchiveItemPolicy::class,
-    ];
 
     /**
      * Register any authentication / authorization services.
@@ -24,4 +21,8 @@ class AuthServiceProvider extends ServiceProvider
     {
         $this->registerPolicies();
     }
+
+    protected $policies = [
+        ArchiveItem::class => ArchiveItemPolicy::class,
+    ];
 }
