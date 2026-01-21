@@ -11,7 +11,6 @@ class User extends Authenticatable
     protected $fillable = [
         'a_id',
         'username',
-        'email',
         'password_hash',
         'status',
     ];
@@ -32,6 +31,15 @@ class User extends Authenticatable
             'user_group_memberships'
         )->withPivot('role')->withTimestamps();
     }
+
+    public function userGroups()
+    {
+        return $this->belongsToMany(
+            UserGroup::class,
+            'user_group_memberships'
+        );
+    }
+
 
     public function accounts(): HasMany
     {

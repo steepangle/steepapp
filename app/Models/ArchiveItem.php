@@ -21,4 +21,13 @@ class ArchiveItem extends Model
     {
         return $this->access_level === 'public';
     }
+
+    public function userGroups()
+    {
+        return $this->belongsToMany(
+            UserGroup::class,
+            'archive_item_user_groups'
+        );
+    }
+
 }

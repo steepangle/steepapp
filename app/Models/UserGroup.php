@@ -30,4 +30,12 @@ class UserGroup extends Model
         return $this->hasMany(Account::class, 'owner_id')
             ->where('owner_type', 'user_group');
     }
+
+    public function archiveItems()
+    {
+        return $this->belongsToMany(
+            ArchiveItem::class,
+            'archive_item_user_groups'
+        );
+    }
 }
