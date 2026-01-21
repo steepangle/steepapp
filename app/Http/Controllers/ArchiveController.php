@@ -2,51 +2,45 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\ArchiveItem;
 use Illuminate\Http\Request;
+use App\Models\ArchiveItem;
 use Illuminate\Support\Facades\Auth;
 
 class ArchiveController extends Controller
 {
+    /**
+     * Display a listing of the archive items.
+     */
     public function index()
     {
         $user = Auth::user();
 
-        // Get IDs of all user groups this user belongs to
-        $userGroups = $user ? $user->groups()->pluck('user_groups.id')->toArray() : [];
+        // Get the IDs of the user's groups
+        $userGroupIds = $user ? $user->groups()->pluck('id')->toArray() : [];
 
-        // Fetch archives
-        $archives = ArchiveItem::where('access_level', 'public')
-            ->orWhereExists(function ($query) use ($userGroups) {
-                $query->select('*')
-                    ->from('user_groups')
-                    ->join('archive_item_user_groups', 'user_groups.id', '=', 'archive_item_user_groups.user_group_id')
-                    ->whereColumn('archive_items.id', 'archive_item_user_groups.archive_item_id')
-                    ->whereIn('user_groups.id', $userGroups);
-            })
-            ->get();
+        // Access map for blade display
+        $accessMap = [
+            'omega'  => ['symbol' => '🟥 Ω', 'name' => 'Supreme Root Access', 'color' => '#ff0000'],
+            'phi'    => ['symbol' => '🟧 Φ', 'name' => 'Prime Directive Access', 'color' => '#ff6600'],
+            'sigma'  => ['symbol' => '🟨 Σ', 'name' => 'System Integrity Access', 'color' => '#ffd500'],
+            'delta'  => ['symbol' => '🟩 Δ', 'name' => 'Director Access', 'color' => '#33cc33'],
+            'lambda' => ['symbol' => '🟦 Λ', 'name' => 'Licensed Access', 'color' => '#3399ff'],
+            'theta'  => ['symbol' => '🟪 Θ', 'name' => 'Trusted Network Access', 'color' => '#9966ff'],
+            'psi'    => ['symbol' => '⚪ Ψ', 'name' => 'Public Protocol Access', 'color' => '#cccccc'],
+            'chi'    => ['symbol' => '⛔ Χ', 'name' => 'Restricted / Quarantined', 'color' => '#000000'],
+        ];
 
-        return view('archives.index', compact('archives'));
-    }
+        // Query archive items with access control
+        $archiveItems = ArchiveItem::where(function ($query) use ($userGroupIds) {
+            $query->where('access_level', 'public')
+                ->orWhereExists(function ($subquery) use ($userGroupIds) {
+                    $subquery->selectRaw('1')
+                        ->from('archive_item_user_groups')
+                        ->whereColumn('archive_item_user_groups.archive_item_id', 'archive_items.id')
+                        ->whereIn('archive_item_user_groups.user_group_id', $userGroupIds);
+                });
+        })->get();
 
-    public function show($id)
-    {
-        $user = Auth::user();
-        $userGroups = $user ? $user->groups()->pluck('user_groups.id')->toArray() : [];
-
-        $archive = ArchiveItem::where('id', $id)
-            ->where(function ($query) use ($userGroups) {
-                $query->where('access_level', 'public')
-                      ->orWhereExists(function ($q) use ($userGroups) {
-                          $q->select('*')
-                            ->from('user_groups')
-                            ->join('archive_item_user_groups', 'user_groups.id', '=', 'archive_item_user_groups.user_group_id')
-                            ->whereColumn('archive_items.id', 'archive_item_user_groups.archive_item_id')
-                            ->whereIn('user_groups.id', $userGroups);
-                      });
-            })
-            ->firstOrFail();
-
-        return view('archives.show', compact('archive'));
+        return view('archives.index', compact('archiveItems', 'accessMap'));
     }
 }

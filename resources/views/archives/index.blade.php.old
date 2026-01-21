@@ -1,0 +1,51 @@
+<x-app-layout>
+    <x-slot name="header">
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+            {{ __('Archives') }}
+        </h2>
+    </x-slot>
+
+    <div class="py-6">
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+            <div class="bg-white shadow-sm sm:rounded-lg p-6">
+                @if($archives->isEmpty())
+                    <p class="text-gray-500">No archives available.</p>
+                @else
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        @foreach($archives as $archive)
+                            <div class="p-4 border rounded-lg hover:shadow-md transition">
+                                <h3 class="font-semibold text-lg text-gray-800">{{ $archive->title }}</h3>
+                                <p class="text-gray-600 mt-1">{{ $archive->description }}</p>
+
+                                @php
+                                    $accessLevels = [
+                                        'omega' => ['symbol' => '🟥 Ω', 'color' => '#ff0000', 'name' => 'Supreme Root Access'],
+                                        'phi'   => ['symbol' => '🟧 Φ', 'color' => '#ff6600', 'name' => 'Prime Directive Access'],
+                                        'sigma' => ['symbol' => '🟨 Σ', 'color' => '#ffd500', 'name' => 'System Integrity Access'],
+                                        'delta' => ['symbol' => '🟩 Δ', 'color' => '#33cc33', 'name' => 'Director Access'],
+                                        'lambda'=> ['symbol' => '🟦 Λ', 'color' => '#3399ff', 'name' => 'Licensed Access'],
+                                        'theta' => ['symbol' => '🟪 Θ', 'color' => '#9966ff', 'name' => 'Trusted Network Access'],
+                                        'psi'   => ['symbol' => '⚪ Ψ', 'color' => '#cccccc', 'name' => 'Public Protocol Access'],
+                                        'chi'   => ['symbol' => '⛔ Χ', 'color' => '#000000', 'name' => 'Restricted / Quarantined'],
+                                    ];
+                                    $level = strtolower($archive->access_level);
+                                    $badge = $accessLevels[$level] ?? ['symbol' => '', 'color' => '#999999', 'name' => ucfirst($archive->access_level)];
+                                @endphp
+
+                                <span class="inline-block mt-2 px-2 py-1 text-xs font-semibold rounded"
+                                      style="background-color: {{ $badge['color'] }}; color: {{ $badge['color'] === '#000000' ? '#fff' : '#000' }}">
+                                    {{ $badge['symbol'] }} {{ $badge['name'] }}
+                                </span>
+                                <a
+                                    href="{{ route('archive.download', $archive->id) }}"
+                                    class="inline-block mt-2 px-3 py-1 bg-blue-500 text-white text-sm rounded hover:bg-blue-600">
+                                    Download PDF
+                                </a>
+                            </div>
+                        @endforeach
+                    </div>
+                @endif
+            </div>
+        </div>
+    </div>
+</x-app-layout>

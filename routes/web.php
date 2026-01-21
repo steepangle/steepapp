@@ -20,10 +20,8 @@ Route::middleware('auth')->group(function () {
 
 require __DIR__.'/auth.php';
 
-Route::get('/archive/{archive}', [ArchiveController::class, 'show'])
-    ->name('archive.show');
-
-
 Route::get('/archives', [ArchiveController::class, 'index'])->name('archive.index');
-Route::get('/archive/{archive}', [ArchiveController::class, 'show'])->name('archive.show');
+
+Route::get('/archive/{archive}/download', [ArchiveController::class, 'download'])
+    ->name('archive.download');
 
