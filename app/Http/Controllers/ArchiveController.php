@@ -24,7 +24,7 @@ class ArchiveController extends Controller
             })
             ->get();
 
-        return view('archives.index', compact('archives'));
+        return view('archive.index', compact('archive'));
     }
 }
 
