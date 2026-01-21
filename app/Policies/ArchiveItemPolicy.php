@@ -2,31 +2,22 @@
 
 namespace App\Policies;
 
-use App\Models\User;
 use App\Models\ArchiveItem;
+use App\Models\User;
 
 class ArchiveItemPolicy
 {
     /**
      * Determine whether the user can view the archive item.
      */
-    public function view(User $user, ArchiveItem $item): bool
+    public function view(?User $user, ArchiveItem $item): bool
     {
-        // Public archive items
-        if ($item->access_level === 'public') {
+        // Public archives are visible to everyone
+        if ($item->isPublic()) {
             return true;
         }
 
-        // User-level private access
-        if ($item->access_level === 'user') {
-            return true;
-        }
-
-        // Group-based access
-        if ($item->access_level === 'group') {
-            return $user->groups()->exists();
-        }
-
-        return false;
+        // Non-public archives require authentication
+        return $user !== null;
     }
 }

@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Builder;
 
 class ArchiveItem extends Model
 {
@@ -18,8 +17,8 @@ class ArchiveItem extends Model
         'published_at' => 'datetime',
     ];
 
-    public function scopePublished(Builder $query): Builder
+    public function isPublic(): bool
     {
-        return $query->whereNotNull('published_at');
+        return $this->access_level === 'public';
     }
 }

@@ -18,3 +18,9 @@ Route::middleware('auth')->group(function () {
 });
 
 require __DIR__.'/auth.php';
+
+use App\Http\Controllers\ArchiveController;
+
+Route::get('/archive/{archive}', [ArchiveController::class, 'show'])
+    ->name('archive.show');
+
